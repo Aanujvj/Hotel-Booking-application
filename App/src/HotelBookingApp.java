@@ -1,62 +1,61 @@
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
-// 1. Reservation Class to hold guest details
-class Reservation {
-    private String name;
-    private String roomType;
+// --- Core Service Class ---
+class RoomAllocationService {
+    private Set<String> allocatedRoomIds;
+    private Map<String, Set<String>> assignedRoomsByType;
 
-    public Reservation(String name, String roomType) {
-        this.name = name;
-        this.roomType = roomType;
+    public RoomAllocationService() {
+        this.allocatedRoomIds = new HashSet<>();
+        this.assignedRoomsByType = new HashMap<>();
     }
 
-    public String getName() { return name; }
+    public void allocateRoom(Reservation reservation, RoomInventory inventory) {
+        String type = reservation.getRoomType();
+        String uniqueId = generateRoomId(type);
+
+        // Update tracking structures
+        allocatedRoomIds.add(uniqueId);
+        assignedRoomsByType.computeIfAbsent(type, k -> new HashSet<>()).add(uniqueId);
+
+        System.out.println("Booking confirmed for Guest: " + reservation.getGuestName() + ", Room ID: " + uniqueId);
+    }
+
+    private String generateRoomId(String roomType) {
+        // Count how many of this type already exist to increment the ID
+        int nextId = assignedRoomsByType.getOrDefault(roomType, Collections.emptySet()).size() + 1;
+        return roomType + "-" + nextId;
+    }
+}
+
+// --- Data Models ---
+class Reservation {
+    private String guestName;
+    private String roomType;
+
+    public Reservation(String guestName, String roomType) {
+        this.guestName = guestName;
+        this.roomType = roomType;
+    }
+    public String getGuestName() { return guestName; }
     public String getRoomType() { return roomType; }
 }
 
-// 2. BookingRequestQueue Class to handle the FIFO logic
-class BookingRequestQueue {
-    private Queue<Reservation> queue = new LinkedList<>();
-
-    public void addRequest(Reservation res) {
-        queue.add(res);
-    }
-
-    public boolean hasPendingRequests() {
-        return !queue.isEmpty();
-    }
-
-    public Reservation processNext() {
-        return queue.poll();
-    }
+class RoomInventory {
+    // Placeholder for inventory management logic
 }
 
-// 3. Main Class
+// --- Main Entry Point ---
 public class HotelBookingApp {
     public static void main(String[] args) {
+        System.out.println("Room Allocation Processing");
 
-        // Display application header
-        System.out.println("Booking Request Queue");
+        RoomAllocationService service = new RoomAllocationService();
+        RoomInventory inventory = new RoomInventory();
 
-        // Initialize booking queue
-        BookingRequestQueue bookingQueue = new BookingRequestQueue();
-
-        // Create booking requests
-        Reservation r1 = new Reservation("Abhi", "Single");
-        Reservation r2 = new Reservation("Subha", "Double");
-        Reservation r3 = new Reservation("Vanmathi", "Suite");
-
-        // Add requests to the queue
-        bookingQueue.addRequest(r1);
-        bookingQueue.addRequest(r2);
-        bookingQueue.addRequest(r3);
-
-        // Display queued booking requests in FIFO order
-        while (bookingQueue.hasPendingRequests()) {
-            Reservation current = bookingQueue.processNext();
-            System.out.println("Processing booking for Guest: " + current.getName() +
-                    ", Room Type: " + current.getRoomType());
-        }
+        // Execution matching your requirement image
+        service.allocateRoom(new Reservation("Abhi", "Single"), inventory);
+        service.allocateRoom(new Reservation("Subha", "Single"), inventory);
+        service.allocateRoom(new Reservation("Vanmathi", "Suite"), inventory);
     }
 }
