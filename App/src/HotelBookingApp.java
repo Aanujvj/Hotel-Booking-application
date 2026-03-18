@@ -1,4 +1,4 @@
-import java.util.LinkedHashMap; // Use LinkedHashMap to keep the order from the image
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 class RoomDetails {
@@ -16,24 +16,17 @@ class RoomDetails {
 }
 
 class RoomInventory {
-    // Change Map value from Integer to RoomDetails
-    private Map<String, RoomDetails> roomAvailability;
+    private Map<String, RoomDetails> inventory = new LinkedHashMap<>();
 
     public RoomInventory() {
-        // Use LinkedHashMap so the output stays in order: Single, Double, Suite
-        this.roomAvailability = new LinkedHashMap<>();
-        initializeInventory();
-    }
-
-    private void initializeInventory() {
-        // Add RoomDetails objects with the data from your image
-        roomAvailability.put("Single Room", new RoomDetails(1, 250, 1500.0, 5));
-        roomAvailability.put("Double Room", new RoomDetails(2, 400, 2500.0, 3));
-        roomAvailability.put("Suite Room", new RoomDetails(3, 750, 5000.0, 2));
+        // Data exactly as shown in your image
+        inventory.put("Single Room", new RoomDetails(1, 250, 1500.0, 5));
+        inventory.put("Double Room", new RoomDetails(2, 400, 2500.0, 3));
+        inventory.put("Suite Room", new RoomDetails(3, 750, 5000.0, 2));
     }
 
     public Map<String, RoomDetails> getRoomAvailability() {
-        return roomAvailability;
+        return inventory;
     }
 }
 
@@ -41,14 +34,14 @@ public class HotelBookingApp {
     public static void main(String[] args) {
         RoomInventory inventory = new RoomInventory();
 
-        System.out.println("Hotel Room Inventory Status\n");
+        System.out.println("Room Search\n");
 
         inventory.getRoomAvailability().forEach((roomName, details) -> {
             System.out.println(roomName + ":");
             System.out.println("Beds: " + details.beds);
             System.out.println("Size: " + details.size + " sqft");
             System.out.println("Price per night: " + details.price);
-            System.out.println("Available Rooms: " + details.available);
+            System.out.println("Available: " + details.available);
             System.out.println();
         });
     }
