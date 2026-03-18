@@ -1,48 +1,62 @@
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.Queue;
 
-class RoomDetails {
-    int beds;
-    int size;
-    double price;
-    int available;
+// 1. Reservation Class to hold guest details
+class Reservation {
+    private String name;
+    private String roomType;
 
-    public RoomDetails(int beds, int size, double price, int available) {
-        this.beds = beds;
-        this.size = size;
-        this.price = price;
-        this.available = available;
+    public Reservation(String name, String roomType) {
+        this.name = name;
+        this.roomType = roomType;
+    }
+
+    public String getName() { return name; }
+    public String getRoomType() { return roomType; }
+}
+
+// 2. BookingRequestQueue Class to handle the FIFO logic
+class BookingRequestQueue {
+    private Queue<Reservation> queue = new LinkedList<>();
+
+    public void addRequest(Reservation res) {
+        queue.add(res);
+    }
+
+    public boolean hasPendingRequests() {
+        return !queue.isEmpty();
+    }
+
+    public Reservation processNext() {
+        return queue.poll();
     }
 }
 
-class RoomInventory {
-    private Map<String, RoomDetails> inventory = new LinkedHashMap<>();
-
-    public RoomInventory() {
-        // Data exactly as shown in your image
-        inventory.put("Single Room", new RoomDetails(1, 250, 1500.0, 5));
-        inventory.put("Double Room", new RoomDetails(2, 400, 2500.0, 3));
-        inventory.put("Suite Room", new RoomDetails(3, 750, 5000.0, 2));
-    }
-
-    public Map<String, RoomDetails> getRoomAvailability() {
-        return inventory;
-    }
-}
-
+// 3. Main Class
 public class HotelBookingApp {
     public static void main(String[] args) {
-        RoomInventory inventory = new RoomInventory();
 
-        System.out.println("Room Search\n");
+        // Display application header
+        System.out.println("Booking Request Queue");
 
-        inventory.getRoomAvailability().forEach((roomName, details) -> {
-            System.out.println(roomName + ":");
-            System.out.println("Beds: " + details.beds);
-            System.out.println("Size: " + details.size + " sqft");
-            System.out.println("Price per night: " + details.price);
-            System.out.println("Available: " + details.available);
-            System.out.println();
-        });
+        // Initialize booking queue
+        BookingRequestQueue bookingQueue = new BookingRequestQueue();
+
+        // Create booking requests
+        Reservation r1 = new Reservation("Abhi", "Single");
+        Reservation r2 = new Reservation("Subha", "Double");
+        Reservation r3 = new Reservation("Vanmathi", "Suite");
+
+        // Add requests to the queue
+        bookingQueue.addRequest(r1);
+        bookingQueue.addRequest(r2);
+        bookingQueue.addRequest(r3);
+
+        // Display queued booking requests in FIFO order
+        while (bookingQueue.hasPendingRequests()) {
+            Reservation current = bookingQueue.processNext();
+            System.out.println("Processing booking for Guest: " + current.getName() +
+                    ", Room Type: " + current.getRoomType());
+        }
     }
 }
